@@ -58,7 +58,7 @@ coursesRouter.post("/", (req, res) => {
   const { error } = validateCourse(req.body);
 
   if (error) {
-    return req.status(404).send(result.error.details[0].message);
+    return res.status(404).send(error.details[0].message);
   }
   const course = {
     id: courses.length + 1,
@@ -80,7 +80,7 @@ coursesRouter.put("/:id", (req, res) => {
   //If invalide retunr 400 - bad reques
   const { error } = validateCourse(req.body);
   if (error) {
-    return req.status(404).send(result.error.details[0].message);
+    return res.status(404).send(error.details[0].message);
   }
   //Update Course
   course.name = req.body.name;
@@ -88,11 +88,26 @@ coursesRouter.put("/:id", (req, res) => {
   res.send(course);
 });
 
+//Delete
+coursesRouter.delete('/:id', (req, res) => {
+
+  //Look up the course
+//Not existing, return 404
+const course = courses.find((c) => c.id === parseInt(req.params.id));
+  if (!course) {
+    return res.status(404).send("Cours with this id was not found");
+  }
+//Delete
+//find index from the courses array
+const index = courses.indexOf(course);
+
+//splice is removing one object from courses object
+courses.splice(index, 1);
+res.send(course)
+});
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => console.log(`listening in port ${port}`));
 
-// app.post()
-// app.put()
-// app.delete()
-//Input Validation
+
+
